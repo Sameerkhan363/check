@@ -15,7 +15,7 @@ from light_controller import send_light_command
 
 # --- Configuration ---
 USE_SIMULATOR = False
-RTSP_URL = ""
+RTSP_URL = "rtsp://admin:Test@321@192.168.1.64/Streaming/Channels/101/"
 FRAME_INTERVAL = 5
 ANPR_API_URL = "https://b131-2405-201-e005-304f-30fb-eddd-b17a-b39d.ngrok-free.app/"
 
