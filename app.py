@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, Response, request, abort
 import cv2
 import numpy as np
@@ -13,11 +12,15 @@ import requests
 from light_simulator import LightSimulator
 from light_controller import send_light_command
 
-# --- Configuration ---
-USE_SIMULATOR = False
-RTSP_URL = "rtsp://admin:Test@321@192.168.1.64/Streaming/Channels/101/"
-FRAME_INTERVAL = 5
-ANPR_API_URL = "https://b131-2405-201-e005-304f-30fb-eddd-b17a-b39d.ngrok-free.app/"
+# --- Environment-Based Configuration ---
+USE_SIMULATOR = os.getenv("USE_SIMULATOR", "false").lower() == "true"
+RTSP_URL = os.getenv("RTSP_URL", "")
+FRAME_INTERVAL = int(os.getenv("FRAME_INTERVAL", "5"))
+ANPR_API_URL = os.getenv("ANPR_API_URL", "")
+MYSQL_HOST = os.getenv("MYSQL_HOST")
+MYSQL_USER = os.getenv("MYSQL_USER")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+MYSQL_DB = os.getenv("MYSQL_DB")
 
 frame_queue = queue.Queue(maxsize=5)
 unmatched_counter = {}
@@ -39,10 +42,10 @@ def mask_watermark(frame):
 
 # --- MySQL Database ---
 db = mysql.connector.connect(
-    host="193.203.184.52",
-    user="u691581411_vipras_erp",
-    password="Vipras_erp@123",
-    database="u691581411_vipras_erp"
+    host=MYSQL_HOST,
+    user=MYSQL_USER,
+    password=MYSQL_PASSWORD,
+    database=MYSQL_DB
 )
 cursor = db.cursor()
 
@@ -122,7 +125,7 @@ def ocr_worker():
 
 @app.route('/')
 def index():
-    return "<h1>ANPR System</h1><p>Use /video_feed?api_key=42afd4b05354429cb4e57219eea353ce to stream video.</p>"
+    return "<h1>ANPR System</h1><p>Use /video_feed?api_key=YOUR_KEY to stream video.</p>"
 
 @app.route('/video_feed')
 def video_feed():
